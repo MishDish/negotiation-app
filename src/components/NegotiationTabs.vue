@@ -23,6 +23,7 @@
 <script>
 
 import NegotiationTab from '@/components/NegotiationTab'
+import  { isUndefinedOrZero }  from "@/shared/mixins";
 
 export default {
   components:{
@@ -43,6 +44,12 @@ export default {
     updateProposedValue(value){
       this.employerProposal = this.isEmployerTab  ? value : this.employerProposal 
       this.employeeProposal = !this.isEmployerTab  ? value : this.employeeProposal 
+      
+      if(isUndefinedOrZero(this.employerProposal)
+       || isUndefinedOrZero(this.employeeProposal)){
+         return
+      }
+
       if(this.employeeProposal <= this.employerProposal ){
         alert('SUCCESS!')
         return;
