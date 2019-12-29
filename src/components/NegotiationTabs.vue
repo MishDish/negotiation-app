@@ -62,35 +62,30 @@ export default {
   },
   methods:{
 
-  resetNegotiation (){
-    this.employerProposal = 0
-    this.employeeProposal = 0
-  },
+    resetNegotiation (){
+      this.employerProposal = 0
+      this.employeeProposal = 0
+    },
 
-  async updateProposedValue(value){
-        this.employerProposal = this.isEmployerTab  ? value : this.employerProposal 
-        this.employeeProposal = !this.isEmployerTab  ? value : this.employeeProposal 
-        if(this.employerProposal === 0 || this.employeeProposal === 0 ){
-          return
-        }
+    async updateProposedValue(value){
+          this.employerProposal = this.isEmployerTab  ? value : this.employerProposal 
+          this.employeeProposal = !this.isEmployerTab  ? value : this.employeeProposal 
 
-        const weatherInfo = await getCurrentLondonWeatherData()
-        if(weatherInfo && weatherInfo.main && weatherInfo.main.temp ) {
-            this.currentTemp  = `${weatherInfo.main.temp} `
-        }
+         if(isUndefinedOrZero(this.employerProposal)|| isUndefinedOrZero(this.employeeProposal)){
+            return
+          }
 
-        if(isUndefinedOrZero(this.employerProposal)
-        || isUndefinedOrZero(this.employeeProposal)){
-          return
-        }
-
-        this.$refs['negitiation-modal'].show()
+          const weatherInfo = await getCurrentLondonWeatherData()
+          if(weatherInfo && weatherInfo.main && weatherInfo.main.temp ) {
+              this.currentTemp  = `${weatherInfo.main.temp} `
+          }
+          this.$refs['negitiation-modal'].show()
+      }
     }
-  }
-
 }
 
 Vue.use(ModalPlugin)
+
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
