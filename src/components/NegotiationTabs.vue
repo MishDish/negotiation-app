@@ -2,25 +2,30 @@
   <div class="page-container">
     <div class="bid-tabs">
       <ul class="bid-tabs__header">
-          <li v-on:click="isEmployerTab = true" 
+          <li v-on:click="toggleTabs" 
               v-bind:class="{ active: isEmployerTab }" ><a>Employer</a></li>
-          <li v-on:click="isEmployerTab = false"  
+          <li v-on:click="toggleTabs"  
               v-bind:class="{ active: !isEmployerTab }"><a>Employee</a></li>
       </ul>
       <div class="bid-tabs__body">
+          <div v-if="spinnerOn"><b-spinner label="Loading..."></b-spinner></div>
+      
           <NegotiationTab  v-bind:placeholder="'Enter maximum offer'"
                            v-if="isEmployerTab"
+                           v-bind:isInputShown = "isEmployerTab && employerProposal === 0"
                            @proposed-value="updateProposedValue">
           </NegotiationTab> 
           <NegotiationTab v-bind:placeholder="'Enter minimum salary'" 
                           v-if="!isEmployerTab"
+                          v-bind:isInputShown = "!isEmployerTab && employeeProposal === 0"
                           @proposed-value="updateProposedValue">
-          </NegotiationTab> 
+          </NegotiationTab>
 
-          <div>
+          <div class="modal">
             <b-modal id="modal-1" title="Negotiation" 
                      ref="negitiation-modal"  @hide="resetNegotiation">
-              <div v-if="employeeProposal <= this.employerProposal">
+
+              <div v-if="employeeProposal <= employerProposal">
                 <h3>Success !</h3> 
                 <span>Maximum offer was: {{ employerProposal }}</span> <br>
                 <span>Minimum expected salary was: {{ employeeProposal }} </span>
@@ -54,7 +59,8 @@ export default {
       isEmployerTab: true,
       employerProposal : 0,
       employeeProposal : 0,
-      currentTemp: 0
+      currentTemp: 0,
+      spinnerOn : false
     }
   },
   computed: {
@@ -67,19 +73,27 @@ export default {
       this.employeeProposal = 0
     },
 
-    async updateProposedValue(value){
+    toggleTabs() {
+      this.isEmployerTab = !this.isEmployerTab; 
+    },
+
+    async updateProposedValue(value) {
           this.employerProposal = this.isEmployerTab  ? value : this.employerProposal 
           this.employeeProposal = !this.isEmployerTab  ? value : this.employeeProposal 
-
+  
          if(isUndefinedOrZero(this.employerProposal)|| isUndefinedOrZero(this.employeeProposal)){
             return
           }
+
+          this.spinnerOn = true
 
           const weatherInfo = await getCurrentLondonWeatherData()
           if(weatherInfo && weatherInfo.main && weatherInfo.main.temp ) {
               this.currentTemp  = `${weatherInfo.main.temp} `
           }
+      
           this.$refs['negitiation-modal'].show()
+          this.spinnerOn = false
       }
     }
 }

@@ -1,7 +1,7 @@
 <template>
-    <form class="entry-form" action="negotiation"> 
+    <form class="entry-form" action="negotiation" v-if="isInputShown"> 
         <input
-            type="number" 
+            type="number"
             v-bind="$attrs"
             v-bind:value="inputValue" 
             :placeholder="[[ placeholder ]]"
@@ -23,19 +23,18 @@ export default {
   props:{
       inputValue : Number,
       placeholder: String,
+      isInputShown: Boolean,
   },
   computed: {
     
   },
   methods: {
       submitInput (){
-        this.$emit('proposed-value', this.$refs.proposal.value)
+        this.$emit('proposed-value', Number(this.$refs.proposal.value))
       }
   }
 }
-/** TO DO :
- *  2. Hide the input after sumbit
- */
+
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
